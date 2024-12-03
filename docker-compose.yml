@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    restart: always
+    command: [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=dj_tg_auth.settings
+    volumes:
+      - app_static_files:/srv/app/static:rw
+      - app_media_files:/srv/app/media:rw
+      - .:/srv/app
+
+  bot:
+    build: .
+    command: [ "python", "bot.py" ]
+    depends_on:
+      - app
+
+volumes:
+  app_media_files: { }
+  app_static_files: { }

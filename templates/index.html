@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if request.user.is_authenticated %}
+    <p>
+      Добро пожаловать, {{ request.user.username }}!
+    </p>
+  {% else %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authModal">
+      Вход
+    </button>
+    <div class="modal fade" id="authmodal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Вход на сайт</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              После нажатия кнопки вы перейдете в диалог с нашим ботом @tgauthchallenge_bot.
+              <br>
+              <br>
+              В диалоге с ботом нажмите кнопку Start для входа.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <a id="authButton" class="btn btn-success" href="{{ telegram_link }}" target="_blank">
+              Продолжить
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $("#authButton").on("click", function () {
+        function checkAuthStatus() {
+          fetch("/api/telegram_login/check/")
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                location.reload();
+              }
+            }
+          );
+        }
+
+        setInterval(checkAuthStatus, 5000);
+      });
+    </script>
+  {% endif %}
+{% endblock content %}
